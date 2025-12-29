@@ -31,6 +31,8 @@ contracts/cache_forge/
 contracts/dependencies/
 contracts/out/
 contracts/cache/
+contracts/coverage
+contracts/lcov.info
 # Ignores development broadcast logs
 !/broadcast
 /broadcast/*/31337/

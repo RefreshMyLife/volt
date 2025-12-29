@@ -17,7 +17,7 @@ import { parseUnits } from "viem";
 
 export function WithdrawForm() {
   const [amount, setAmount] = useState("");
-  const assets = amount ? parseUnits(amount, 18) : 0n;
+  const assets = amount ? parseUnits(amount, 6) : 0n;
   const { address } = useAccount();
   const { withdraw, isPending, isSuccess, isError, error, data } =
     useWithdraw();

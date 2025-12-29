@@ -6,30 +6,32 @@ struct AppStorage {
                              VAULT STATE
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice Баланас долей каждого пользователя
+    /// @notice balance of shares each user
     mapping(address => uint256) shares;
-    /// @notice Всего активов (TVL)
+    /// @notice  TVL (token underlying)
     uint256 totalAssets;
-    /// @notice Всего долей
+    /// @notice  total amount of shares
     uint256 totalShares;
-    /// @notice Адрес токена
+    /// @notice token(underlying) address
     address tokenAssetAddress;
-    /// @notice Decimals для shares
+    /// @notice decimals for shares
     uint8 decimals;
-    /// @notice Флаг инициализации
+    /// @notice initialization flag
     bool initialized;
+    /// @notice status for reentracy guard
+    uint256 status;
     /*//////////////////////////////////////////////////////////////
                             ACCESS STATE
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice  Whitelist пользователей
+    /// @notice  users whitelist
     mapping(address => bool) whitelist;
-    /// @notice  Список всех адресов которые находятся в whitelist
-    address[] whitelistedAddresses;
-    /// @notice Индекс адреса в массиве whitelistedAddresses
-    mapping(address => uint256) whitelistIndex;
-    /// @notice адрес админа
+    /// @notice admin address
     address admin;
+    /// @notice the list of all address which located in whitelist
+    address[] whitelistedAddresses;
+    /// @notice address index in whitelistedAddresses array
+    mapping(address => uint256) whitelistIndex;
 }
 
 library LibAppStorage {

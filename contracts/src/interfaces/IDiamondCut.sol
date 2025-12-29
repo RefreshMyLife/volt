@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 /// @title IDiamondCut
-/// @notice Интерфейс для добавления/удаления/замены facets
+/// @notice Interface for manage facet
 interface IDiamondCut {
     enum FacetCutAction {
         Add,
@@ -16,16 +16,16 @@ interface IDiamondCut {
         bytes4[] functionSelectors;
     }
 
-    /// @notice Добавить/заменить/удалить facets
-    /// @param _diamondCut Массив изменений
-    /// @param _init Адрес контракта для инициализации
-    /// @param _calldata Данные для вызова _init
+    /// @notice add/replace/remove facets
+    /// @param _diamondCut array of changes
+    /// @param _init addres for  initilization contractконтракта для инициализации
+    /// @param _calldata data for call _init
     function diamondCut(
         FacetCut[] calldata _diamondCut,
         address _init,
         bytes calldata _calldata
     ) external;
 
-    /// @notice изменениe facets
+    /// @notice changes in facets
     event DiamondCut(FacetCut[] _diamondCut, address _init, bytes _calldata);
 }

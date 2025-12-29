@@ -31,19 +31,22 @@ contract DeployDiamond is Script {
         diamondInit = new DiamondInit();
         diamond = new Diamond(msg.sender, address(diamondCutFacet));
 
-        /// @notice  Собираем селекторы на функции
+        // сollect selectors for DiamondLoupeFacet
         bytes4[] memory loupeSelectors = new bytes4[](4);
         loupeSelectors[0] = DiamondLoupeFacet.facets.selector;
         loupeSelectors[1] = DiamondLoupeFacet.facetFunctionSelectors.selector;
         loupeSelectors[2] = DiamondLoupeFacet.facetAddress.selector;
         loupeSelectors[3] = DiamondLoupeFacet.facetAddresses.selector;
 
-        bytes4[] memory accessSelectors = new bytes4[](4);
+        // сollect selectors for AccessFacet
+        bytes4[] memory accessSelectors = new bytes4[](5);
         accessSelectors[0] = AccessFacet.isWhitelisted.selector;
         accessSelectors[1] = AccessFacet.getAdmin.selector;
         accessSelectors[2] = AccessFacet.addToWhitelist.selector;
         accessSelectors[3] = AccessFacet.removeFromWhitelist.selector;
+        accessSelectors[4] = AccessFacet.getWhitelistedAddresses.selector;
 
+        // сollect selectors for VaultFacet
         bytes4[] memory vaultSelectors = new bytes4[](7);
         vaultSelectors[0] = VaultFacet.asset.selector;
         vaultSelectors[1] = VaultFacet.totalAssets.selector;
@@ -55,31 +58,33 @@ contract DeployDiamond is Script {
 
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](3);
 
-        /// @notice Добавляем селекторы в facet
+        // define the cut for DiamondLoupeFacet
         cuts[0] = IDiamondCut.FacetCut({
             facetAddress: address(diamondLoupeFacet),
             action: IDiamondCut.FacetCutAction.Add,
             functionSelectors: loupeSelectors
         });
-
+        // define the cut for AccessFacet
         cuts[1] = IDiamondCut.FacetCut({
             facetAddress: address(accessFacet),
             action: IDiamondCut.FacetCutAction.Add,
             functionSelectors: accessSelectors
         });
+        // define the cut for VaultFacet
         cuts[2] = IDiamondCut.FacetCut({
             facetAddress: address(vaultFacet),
             action: IDiamondCut.FacetCutAction.Add,
             functionSelectors: vaultSelectors
         });
 
-        /// @notice готовим данные
+        // prepare init data
         bytes memory initCalldata = abi.encodeWithSelector(
             DiamondInit.init.selector,
             networkConfig.tokenAssetAddress,
             networkConfig.admin
         );
 
+        // execute the cut to add facets and initialize state
         IDiamondCut(address(diamond)).diamondCut(
             cuts,
             address(diamondInit),

@@ -7,11 +7,11 @@ import {
 } from "@openzeppelin-contracts-5.3.0/token/ERC20/extensions/IERC20Metadata.sol";
 
 /// @title DiamondInit
-/// @notice Инициализация Vault при первом деплое
+/// @notice In the first deploy initilization Vault
 contract DiamondInit {
-    /// @notice Инициализирует Vault
-    /// @param _tokenAssetAddress Адрес токена
-    /// @param _admin Адрес администратора whitelist
+    /// @notice init Vault
+    /// @param _tokenAssetAddress address of the underlying asset (token)
+    /// @param _admin admin address for addittions in whitelist
     function init(address _tokenAssetAddress, address _admin) external {
         AppStorage storage s = LibAppStorage.appStorage();
 
@@ -23,6 +23,9 @@ contract DiamondInit {
         s.admin = _admin;
         s.decimals = IERC20Metadata(_tokenAssetAddress).decimals();
         s.initialized = true;
+        s.status = 1;
         s.whitelist[_admin] = true;
+        s.whitelistIndex[_admin] = s.whitelistedAddresses.length;
+        s.whitelistedAddresses.push(_admin);
     }
 }

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 /// @title IAccessFacet
-/// @notice Рабата с whitelist
+/// @notice Interect with whitelist
 
 interface IAccessFacet {
     /*//////////////////////////////////////////////////////////////
@@ -15,21 +15,22 @@ interface IAccessFacet {
     /*//////////////////////////////////////////////////////////////
                              VIEW FUNCTION
     //////////////////////////////////////////////////////////////*/
-    /// @notice  Аккаунт в Whitelist?
+    /// @notice  is the account in whitelist
     function isWhitelisted(address account) external view returns (bool);
 
-    /// @notice Получить адрес админа
+    /// @notice get admin address
     function getAdmin() external view returns (address);
 
+    /// @notice get all address which located in whitelitst
     function getWhitelistedAddresses() external view returns (address[] memory);
 
     /*//////////////////////////////////////////////////////////////
                              ADMIN FUNCTION
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice добавление в whitelist
+    /// @notice add  account to whitelist
     function addToWhitelist(address account) external;
 
-    /// @notice удаление из whitelist
+    /// @notice romove account from whitelist
     function removeFromWhitelist(address account) external;
 }

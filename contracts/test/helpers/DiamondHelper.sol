@@ -36,19 +36,22 @@ contract DiamondHelper is Test {
 
         diamond = new Diamond(_owner, address(diamondCutFacet));
 
-        /// @notice  Собираем селекторы на функций
+        // сollect selectors for DiamondLoupeFacet
         bytes4[] memory loupeSelectors = new bytes4[](4);
         loupeSelectors[0] = DiamondLoupeFacet.facets.selector;
         loupeSelectors[1] = DiamondLoupeFacet.facetFunctionSelectors.selector;
         loupeSelectors[2] = DiamondLoupeFacet.facetAddress.selector;
         loupeSelectors[3] = DiamondLoupeFacet.facetAddresses.selector;
 
-        bytes4[] memory accessSelectors = new bytes4[](4);
+        // сollect selectors for AccessFacet
+        bytes4[] memory accessSelectors = new bytes4[](5);
         accessSelectors[0] = AccessFacet.isWhitelisted.selector;
         accessSelectors[1] = AccessFacet.getAdmin.selector;
         accessSelectors[2] = AccessFacet.addToWhitelist.selector;
         accessSelectors[3] = AccessFacet.removeFromWhitelist.selector;
+        accessSelectors[4] = AccessFacet.getWhitelistedAddresses.selector;
 
+        // сollect selectors for VaultFacet
         bytes4[] memory vaultSelectors = new bytes4[](7);
         vaultSelectors[0] = VaultFacet.asset.selector;
         vaultSelectors[1] = VaultFacet.totalAssets.selector;

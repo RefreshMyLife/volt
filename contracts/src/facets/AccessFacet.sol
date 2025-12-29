@@ -56,7 +56,7 @@ contract AccessFacet is IAccessFacet {
         AppStorage storage s = LibAppStorage.appStorage();
         require(s.whitelist[account], "Not whitelisted");
 
-        /// @notice Swap and pop
+        ///  use "swap and pop" for remove el from array
         uint256 idx = s.whitelistIndex[account];
         uint256 lastIdx = s.whitelistedAddresses.length - 1;
 

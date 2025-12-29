@@ -9,6 +9,8 @@ import {
 } from "@openzeppelin-contracts-5.3.0/token/ERC20/utils/SafeERC20.sol";
 contract VaultFacet is IVaultFacet {
     using SafeERC20 for IERC20;
+    uint256 private constant NOT_ENTERED = 1;
+    uint256 private constant ENTERED = 2;
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
@@ -38,6 +40,14 @@ contract VaultFacet is IVaultFacet {
         );
         _;
     }
+    modifier nonReentrant() {
+        AppStorage storage s = LibAppStorage.appStorage();
+        require(s.status != ENTERED, "Reentrant call");
+        s.status = ENTERED;
+        _;
+
+        s.status = NOT_ENTERED;
+    }
     /*//////////////////////////////////////////////////////////////
                              VIEW FUNCTIONS
     //////////////////////////////////////////////////////////////*/
@@ -56,7 +66,7 @@ contract VaultFacet is IVaultFacet {
 
     function convertToShares(uint256 assets) public view returns (uint256) {
         AppStorage storage s = LibAppStorage.appStorage();
-        //Первый депозит => assets == shares
+        // when first dep, then assets == shares
         if (s.totalAssets == 0) {
             return assets;
         }
@@ -65,7 +75,7 @@ contract VaultFacet is IVaultFacet {
 
     function convertToAssets(uint256 shares) public view returns (uint256) {
         AppStorage storage s = LibAppStorage.appStorage();
-        //Первый депозит => assets == shares
+        // when first dep, then assets == shares
         if (s.totalShares == 0) {
             return shares;
         }
@@ -79,35 +89,36 @@ contract VaultFacet is IVaultFacet {
     function deposit(
         uint256 assets,
         address receiver
-    ) external onlyWhitelisted returns (uint256 shares) {
+    ) external onlyWhitelisted nonReentrant returns (uint256 shares) {
         require(assets > 0, "Not have assets");
         require(receiver != address(0), "Receiver address is zero");
 
         AppStorage storage s = LibAppStorage.appStorage();
         shares = convertToShares(assets);
+        s.totalAssets += assets;
+        s.totalShares += shares;
+        s.shares[receiver] += shares;
+
         IERC20(s.tokenAssetAddress).safeTransferFrom(
             msg.sender,
             address(this),
             assets
         );
 
-        s.totalAssets += assets;
-        s.totalShares += shares;
-        s.shares[receiver] += shares;
         emit Deposit(msg.sender, receiver, assets, shares);
         return shares;
     }
 
     function withdraw(
-        uint256 assets,
+        uint256 shares,
         address receiver,
         address owner
-    ) external onlyWhitelisted returns (uint256 shares) {
+    ) external onlyWhitelisted nonReentrant returns (uint256 assets) {
         require(msg.sender == owner, "Not Owner");
-        require(assets > 0, "Not have assets");
+        require(shares > 0, "Not have shares");
         require(receiver != address(0), "Receiver address is zero");
         AppStorage storage s = LibAppStorage.appStorage();
-        shares = convertToShares(assets);
+        assets = convertToAssets(shares);
         require(s.shares[owner] >= shares, "Not have shares");
 
         s.totalShares -= shares;
@@ -117,6 +128,6 @@ contract VaultFacet is IVaultFacet {
         IERC20(s.tokenAssetAddress).safeTransfer(receiver, assets);
         emit Withdraw(msg.sender, receiver, owner, assets, shares);
 
-        return shares;
+        return assets;
     }
 }

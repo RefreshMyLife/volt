@@ -1,4 +1,4 @@
-export const DIAMOND_ADDRESS = '0x46b53ae6BDFbA4F96A52B027EC8e60760b74D6C7' as const
+export const DIAMOND_ADDRESS = '0x8cFF8e5cb7A3F99171106ad2cAD4E4dE4D0c1535' as const
 
 export const VAULT_FACET_ABI = [
 
